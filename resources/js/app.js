@@ -19,6 +19,24 @@ import ExampleComponent from './components/ExampleComponent.vue';
 app.component('example-component', ExampleComponent);
 import LoginComponent from './components/LoginComponent.vue';
 app.component('login-component', LoginComponent);
+import HomeComponent from './components/HomeComponent.vue';
+app.component('home-component', HomeComponent);
+
+
+import CarrosComponent from './components/CarrosComponent.vue';
+app.component('carros-component', CarrosComponent);
+
+import ClientesComponent from './components/ClientesComponent.vue';
+app.component('clientes-component', ClientesComponent);
+
+import MarcasComponent from './components/MarcasComponent.vue';
+app.component('marcas-component', MarcasComponent);
+
+import ModelosComponent from './components/ModelosComponent.vue';
+app.component('modelos-component', ModelosComponent);
+
+import LocacoesComponent from './components/LocacoesComponent.vue';
+app.component('locacoes-component', LocacoesComponent);
 
 /**
  * The following block of code may be used to automatically register your

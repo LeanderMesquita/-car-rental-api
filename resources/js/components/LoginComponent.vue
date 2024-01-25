@@ -82,6 +82,10 @@
                 let url = "http://127.0.0.1:8000/api/login"
                 let config = {
                     method: 'post',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': this.csrf_token
+                    },
                     body: new URLSearchParams({
                         'email': this.email,
                         'password': this.password
