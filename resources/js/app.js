@@ -17,12 +17,20 @@ const app = createApp({});
 
 import ExampleComponent from './components/ExampleComponent.vue';
 app.component('example-component', ExampleComponent);
+
+// Starting
 import LoginComponent from './components/LoginComponent.vue';
 app.component('login-component', LoginComponent);
 import HomeComponent from './components/HomeComponent.vue';
 app.component('home-component', HomeComponent);
 
+// Utilities
+import InputContainerComponent from './components/utilities/InputContainerComponent.vue';
+app.component('input-container-component', InputContainerComponent);
 
+
+
+// Main 
 import CarrosComponent from './components/CarrosComponent.vue';
 app.component('carros-component', CarrosComponent);
 
