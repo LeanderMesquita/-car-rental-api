@@ -30,9 +30,7 @@
                     </template>
                     <template v-slot:footer>
                         <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalMarca">
-                        Adicionar
-                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalMarca">Adicionar</button>
                     </template>
                 </card-component>
 
@@ -40,14 +38,20 @@
                     <template v-slot:content>
                         <div class="col mb-3">
                             <input-container-component title="Nome" id="createName" idHelper="createNameHelper" helper="Informe o nome da marca a ser cadastrada">
-                                <input type="text" class="form-control" id="createName" placeholder="Nome da marca" aria-describedby="createNameHelper">
+                                <input type="text" class="form-control" id="createName" placeholder="Nome da marca" aria-describedby="createNameHelper" v-model="marcaName">
                             </input-container-component>
+                            
                         </div>
                         <div class="col mb-3">
                             <input-container-component title="Logo da marca" id="insertFile" idHelper="fileHelper" helper="Selecione uma imagem no formato .png">
-                                <input type="file" class="form-control" id="insertFile" aria-describedby="fileHelper">
+                                <input type="file" class="form-control" id="insertFile" aria-describedby="fileHelper" @change="loadFile($event)">
                             </input-container-component>
+                            
                         </div>
+                    </template>
+                    <template v-slot:footer>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary btn-sm " @click="save()">Adicionar</button>
                     </template>
                 </modal-component>
             </div>
@@ -56,13 +60,54 @@
 </template>
 
 <script>
+import axios from 'axios'
 import CardComponent from './utilities/CardComponent.vue'
 import InputContainerComponent from './utilities/InputContainerComponent.vue'
 import ModalComponent from './utilities/ModalComponent.vue'
 import TableComponent from './utilities/TableComponent.vue'
 
     export default{
-  components: { InputContainerComponent, TableComponent, CardComponent, ModalComponent },
+        components: { InputContainerComponent, TableComponent, CardComponent, ModalComponent },
+        data(){
+            return {
+                baseURL: 'http://127.0.0.1:8000/api/auth/marca',
+                marcaName: '',
+                imageFile: [],
+            }
+        },
+        computed: {
+                token(){
+                    let token = document.cookie.split(';').find(i => {
+                        return i.includes('token=');
+                    });
+                    token = token.split('=')[1]
+                    token = 'Bearer ' + token
+                    
+                    return token;
+                }
+            },
+        methods: {
+            
+            loadFile(e){
+                this.imageFile = e.target.files;
+            },
+            save(){
+                const config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Accept': 'application/json',
+                        'Authorization': this.token,
+                    }
+                }
+                const formData = new FormData();
+                formData.append('nome', this.marcaName)
+                formData.append('imagem', this.imageFile[0])
+
+                axios.post(this.baseURL, formData, config)
+                    .then(response => {console.log(response)})
+                    .catch(errors => {console.log(errors)})
+            }
+        }
 
     }
 </script>
