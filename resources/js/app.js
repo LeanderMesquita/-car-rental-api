@@ -28,6 +28,13 @@ app.component('home-component', HomeComponent);
 import InputContainerComponent from './components/utilities/InputContainerComponent.vue';
 app.component('input-container-component', InputContainerComponent);
 
+import TableComponent from './components/utilities/TableComponent.vue';
+app.component('table-component', TableComponent);
+
+import CardComponent from './components/utilities/CardComponent.vue';
+app.component('card-component', CardComponent);
+import ModalComponent from './components/utilities/ModalComponent.vue';
+app.component('modal-component', ModalComponent);
 
 
 // Main 
