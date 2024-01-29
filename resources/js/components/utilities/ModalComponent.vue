@@ -10,8 +10,7 @@
                 <slot name="content"></slot>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
-                <button type="submit" class="btn btn-primary btn-sm ">Adicionar</button>
+                <slot name="footer"></slot>
             </div>
             </div>
         </div>
