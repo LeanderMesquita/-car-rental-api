@@ -24,6 +24,11 @@ app.component('login-component', LoginComponent);
 import HomeComponent from './components/HomeComponent.vue';
 app.component('home-component', HomeComponent);
 
+
+
+
+
+
 // Utilities
 import InputContainerComponent from './components/utilities/InputContainerComponent.vue';
 app.component('input-container-component', InputContainerComponent);
@@ -35,6 +40,13 @@ import CardComponent from './components/utilities/CardComponent.vue';
 app.component('card-component', CardComponent);
 import ModalComponent from './components/utilities/ModalComponent.vue';
 app.component('modal-component', ModalComponent);
+
+import AlertComponent from './components/utilities/AlertComponent.vue';
+app.component('alert-component', AlertComponent);
+
+
+
+
 
 
 // Main 

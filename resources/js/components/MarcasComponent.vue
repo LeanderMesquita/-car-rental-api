@@ -35,6 +35,10 @@
                 </card-component>
 
                 <modal-component id="modalMarca" title="Adicionar nova marca">
+                    <template v-slot:alert>
+                        <alert-component type="success" :details="transactionDetails" title="Marca cadastrada com sucesso!" v-if="transactionStts == 'added'"></alert-component>
+                        <alert-component type="danger" :details="transactionDetails" title="Erro ao cadastrar a marca" v-if="transactionStts == 'error'"></alert-component>
+                    </template>
                     <template v-slot:content>
                         <div class="col mb-3">
                             <input-container-component title="Nome" id="createName" idHelper="createNameHelper" helper="Informe o nome da marca a ser cadastrada">
@@ -65,14 +69,18 @@ import CardComponent from './utilities/CardComponent.vue'
 import InputContainerComponent from './utilities/InputContainerComponent.vue'
 import ModalComponent from './utilities/ModalComponent.vue'
 import TableComponent from './utilities/TableComponent.vue'
+import AlertComponent from './utilities/AlertComponent.vue'
 
     export default{
-        components: { InputContainerComponent, TableComponent, CardComponent, ModalComponent },
+        components: { InputContainerComponent, TableComponent, CardComponent, ModalComponent, AlertComponent},
         data(){
-            return {
+     
+                return {
                 baseURL: 'http://127.0.0.1:8000/api/auth/marca',
                 marcaName: '',
                 imageFile: [],
+                transactionStts: '',
+                transactionDetails: [],
             }
         },
         computed: {
@@ -104,8 +112,14 @@ import TableComponent from './utilities/TableComponent.vue'
                 formData.append('imagem', this.imageFile[0])
 
                 axios.post(this.baseURL, formData, config)
-                    .then(response => {console.log(response)})
-                    .catch(errors => {console.log(errors)})
+                    .then(response => {
+                        this.transactionStts = 'added'
+                        this.transactionDetails = response
+                        console.log(response)})
+                    .catch(errors => {
+                        this.transactionStts = 'error'
+                        this.transactionDetails = errors.response
+                        console.log(errors.response)})
             }
         }
 
