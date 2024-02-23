@@ -24,7 +24,7 @@
 
                 <card-component title="Tabela">
                     <template v-slot:content>
-                        <table-component>
+                        <table-component :info="marcas" :titles="['ID', 'Nome', 'Imagem']">
                             
                         </table-component>
                     </template>
@@ -58,6 +58,8 @@
                         <button type="submit" class="btn btn-primary btn-sm " @click="save()">Adicionar</button>
                     </template>
                 </modal-component>
+
+                
             </div>
         </div>
     </div>
@@ -80,7 +82,8 @@ import AlertComponent from './utilities/AlertComponent.vue'
                 marcaName: '',
                 imageFile: [],
                 transactionStts: '',
-                transactionDetails: [],
+                transactionDetails: {},
+                marcas: []
             }
         },
         computed: {
@@ -95,7 +98,24 @@ import AlertComponent from './utilities/AlertComponent.vue'
                 }
             },
         methods: {
-            
+            showList(){
+
+                const config = {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': this.token,
+                    }
+                }
+
+                axios.get(this.baseURL, config)
+                    .then(response => {
+                        this.marcas = response.data
+                        console.log(this.marcas)
+                    })
+                    .catch(errors =>{
+                        console.log(errors)
+                    })
+            },
             loadFile(e){
                 this.imageFile = e.target.files;
             },
@@ -114,13 +134,22 @@ import AlertComponent from './utilities/AlertComponent.vue'
                 axios.post(this.baseURL, formData, config)
                     .then(response => {
                         this.transactionStts = 'added'
-                        this.transactionDetails = response
+                        this.transactionDetails = {
+                            message: "ID do registro: "+response.data.id
+                        }
                         console.log(response)})
                     .catch(errors => {
                         this.transactionStts = 'error'
-                        this.transactionDetails = errors.response
-                        console.log(errors.response)})
+                        this.transactionDetails = {
+                            message: errors.response.data.message,
+                            info: errors.response.data.errors
+                        }
+                        console.log(errors.response)
+                    })
             }
+        },
+        mounted(){
+            this.showList()
         }
 
     }

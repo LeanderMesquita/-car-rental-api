@@ -2,11 +2,10 @@
     <div :class="alertStyle" role="alert">
         {{title}}
         <hr>
-        <span v-if="details.data.message"> {{ details.data.message }}</span>
-        <span v-if="details.data.id"> {{ "ID do registro: "+details.data.id }}</span>
+        <p>{{ details.message }}</p>
         <br>
-        <ul v-if="details.data.errors">
-            <li v-for="i, key in details.data.errors" :key="key">{{ i[0] }}</li>
+        <ul v-if="details.info">
+            <li v-for="i, key in details.info" :key="key">{{ i[0] }}</li>
         </ul>
         
     </div>
