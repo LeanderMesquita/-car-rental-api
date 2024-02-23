@@ -20,15 +20,16 @@ class Marca extends Model
 
     public function rules(){
         return [
-            'nome' => 'required', Rule::unique('nome')->ignore($this->id),
+            'nome' => 'required|unique:marcas', Rule::unique('nome')->ignore($this->id),
             'imagem' => 'required|file|mimes:png',
         ];
     }
     public function feedback(){
         return [
-            'required' => 'O campo :attribute é obrigatório',
-            'imagem.mimes' => 'O arquivo deve ser uma imagem do tipo PNG',
-            'nome.unique' => 'O nome da marca já existe',
+            'required' => 'O campo ":attribute" é obrigatório.',
+            'imagem.mimes' => 'O arquivo deve ser uma imagem do tipo PNG.',
+            'imagem.file' => 'O campo ":attribute" é obrigatório.',
+            'nome.unique' => 'O nome da marca já existe.',
         ];
     }
 
