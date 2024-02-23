@@ -26,8 +26,9 @@ class Marca extends Model
     }
     public function feedback(){
         return [
-            'required' => 'the :attribute is required.',
-            'nome.unique' => 'the name already exists.'
+            'required' => 'O campo :attribute é obrigatório',
+            'imagem.mimes' => 'O arquivo deve ser uma imagem do tipo PNG',
+            'nome.unique' => 'O nome da marca já existe',
         ];
     }
 
