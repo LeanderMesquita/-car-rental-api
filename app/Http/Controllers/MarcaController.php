@@ -38,7 +38,7 @@ class MarcaController extends Controller
         if($request->has('filter')){
             $marcaRepository->filter($request->filter);                
         }
-        return response()->json($marcaRepository->getResults(), 200);
+        return response()->json($marcaRepository->getPaginateResults(5), 200);
     }
 
     /**

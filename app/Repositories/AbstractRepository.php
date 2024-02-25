@@ -28,5 +28,8 @@ abstract class AbstractRepository{
     public function getResults(){
         return $this->model->get();
     }
+    public function getPaginateResults($number_of_registers){
+        return $this->model->paginate($number_of_registers);
+    }
 }
 ?>
