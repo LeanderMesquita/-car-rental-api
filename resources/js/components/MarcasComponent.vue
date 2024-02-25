@@ -24,13 +24,28 @@
 
                 <card-component title="Tabela">
                     <template v-slot:content>
-                        <table-component :info="marcas" :titles="['ID', 'Nome', 'Imagem']">
+                        <table-component 
+                        :info="marcas.data" 
+                        :titles="{
+                            id: {title: 'ID', type:'text'},
+                            nome: {title: 'Nome', type:'text'},
+                            imagem: {title: 'Imagem', type:'image'},
                             
+                        }">
                         </table-component>
                     </template>
                     <template v-slot:footer>
-                        <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalMarca">Adicionar</button>
+                            <div class="col-10">
+                                <paginate-component>
+                                    <li :class="item.active ? 'page-item active' : 'page-item'" v-for="item, key in marcas.links" :key="key" @click="paginate(item)">
+                                        <a class="page-link" v-html="item.label"></a>
+                                    </li>
+                                </paginate-component>
+                            </div>
+                            <div class="col">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalMarca">Adicionar</button>
+                            </div>
                     </template>
                 </card-component>
 
@@ -72,6 +87,7 @@ import InputContainerComponent from './utilities/InputContainerComponent.vue'
 import ModalComponent from './utilities/ModalComponent.vue'
 import TableComponent from './utilities/TableComponent.vue'
 import AlertComponent from './utilities/AlertComponent.vue'
+import PaginateComponent from './utilities/PaginateComponent.vue'
 
     export default{
         components: { InputContainerComponent, TableComponent, CardComponent, ModalComponent, AlertComponent},
@@ -83,7 +99,7 @@ import AlertComponent from './utilities/AlertComponent.vue'
                 imageFile: [],
                 transactionStts: '',
                 transactionDetails: {},
-                marcas: []
+                marcas: { data: []}
             }
         },
         computed: {
@@ -98,6 +114,12 @@ import AlertComponent from './utilities/AlertComponent.vue'
                 }
             },
         methods: {
+            paginate(item){
+                if(item.url){
+                    this.baseURL = item.url;
+                    this.showList();
+                }
+            },
             showList(){
 
                 const config = {
@@ -110,7 +132,6 @@ import AlertComponent from './utilities/AlertComponent.vue'
                 axios.get(this.baseURL, config)
                     .then(response => {
                         this.marcas = response.data
-                        console.log(this.marcas)
                     })
                     .catch(errors =>{
                         console.log(errors)
@@ -137,14 +158,13 @@ import AlertComponent from './utilities/AlertComponent.vue'
                         this.transactionDetails = {
                             message: "ID do registro: "+response.data.id
                         }
-                        console.log(response)})
+                    })
                     .catch(errors => {
                         this.transactionStts = 'error'
                         this.transactionDetails = {
                             message: errors.response.data.message,
                             info: errors.response.data.errors
                         }
-                        console.log(errors.response)
                     })
             }
         },
