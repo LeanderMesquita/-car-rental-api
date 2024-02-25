@@ -44,6 +44,9 @@ app.component('modal-component', ModalComponent);
 import AlertComponent from './components/utilities/AlertComponent.vue';
 app.component('alert-component', AlertComponent);
 
+import PaginateComponent from './components/utilities/PaginateComponent.vue';
+app.component('paginate-component', PaginateComponent);
+
 
 
 
