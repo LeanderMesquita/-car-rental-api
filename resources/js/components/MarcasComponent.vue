@@ -170,17 +170,6 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                 search: { id:'', nome:''}
             }
         },
-        computed: {
-                token(){
-                    let token = document.cookie.split(';').find(i => {
-                        return i.includes('token=');
-                    });
-                    token = token.split('=')[1]
-                    token = 'Bearer ' + token
-                    
-                    return token;
-                }
-            },
         methods: {
             update(){
                 let formData = new FormData();
@@ -196,8 +185,6 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                 const config = {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Accept': 'application/json',
-                        'Authorization': this.token
                     }
                 }
 
@@ -223,14 +210,9 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                 
                 const formData = new FormData()
                 formData.append('_method', 'delete')
-                const config = {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': this.token
-                    }
-                }
                 
-                axios.post(url, formData, config)
+                
+                axios.post(url, formData)
                     .then(response => {
                         
                         this.$store.state.transation.status = 'success'
@@ -269,18 +251,11 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                 this.showList();
             },
             showList(){
-                
-                const config = {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': this.token,
-                    }
-                }
 
                 let url = this.baseURL + '?' + this.paginateURL + this.URLfilter
                 
 
-                axios.get(url, config)
+                axios.get(url)
                     .then(response => {
                         this.marcas = response.data
                     })
@@ -295,8 +270,6 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                 const config = {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Accept': 'application/json',
-                        'Authorization': this.token,
                     }
                 }
                 const formData = new FormData();
