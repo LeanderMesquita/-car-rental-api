@@ -6,15 +6,22 @@
 
 import './bootstrap';
 import { createApp } from 'vue';
+import { createStore } from 'vuex'
 
-import vuex from 'vuex'
-vue.use(vuex)
-
-const store = new vuex.Store({
-    state: {
-        
+// Create a new store instance.
+const store = createStore({
+  state () {
+    return {
+      item: {},
+      transation: {
+        status: '', 
+        message: '',
+        info:''
+      }
     }
+  }
 })
+
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
  * registering components with the application instance so they are ready
@@ -22,6 +29,7 @@ const store = new vuex.Store({
  */
 
 const app = createApp({});
+app.use(store)
 
 import ExampleComponent from './components/ExampleComponent.vue';
 app.component('example-component', ExampleComponent);
