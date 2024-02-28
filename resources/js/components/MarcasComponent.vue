@@ -27,8 +27,8 @@
                         <table-component 
                         :info="marcas.data" 
                         :view="{ visible: true, dataToggle: 'modal', dataTarget:'#modalMarcaView'}"
-                        :update="true"
-                        :drop="true"
+                        :update="{ visible: true, dataToggle: 'modal', dataTarget:'#modalMarcaUpdate'}"
+                        :drop="{ visible: true, dataToggle: 'modal', dataTarget:'#modalMarcaDrop'}"
                         :titles="{
                             id: {title: 'ID', type:'text'},
                             nome: {title: 'Nome', type:'text'},
@@ -79,9 +79,63 @@
 
                 <modal-component id="modalMarcaView" title="Visualizar marca">
                     <template v-slot:alert></template>
-                    <template v-slot:content></template>
+                    <template v-slot:content>
+                        <input-container-component title="ID">
+                            <input type="text" class="form-control" :value="$store.state.item.id" disabled>
+                        </input-container-component>
+                        <input-container-component title="Nome da Marca">
+                            <input type="text" class="form-control" :value="$store.state.item.nome" disabled>
+                        </input-container-component>
+                        <input-container-component title="Imagem">
+                            <img :src="'storage/'+$store.state.item.imagem" alt="" v-if="$store.state.item.imagem">
+                        </input-container-component>
+                    </template>
                     <template v-slot:footer>
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                    </template>
+                </modal-component>
+
+                <modal-component id="modalMarcaUpdate" title="Atualizar marca">
+                    <template v-slot:alert>
+                        <alert-component type="success" title="Ação realizada." :details="$store.state.transation" v-if="$store.state.transation.status == 'success'"></alert-component>
+                        <alert-component type="danger" title="Erro!" :details="$store.state.transation" v-if="$store.state.transation.status == 'error'"></alert-component>
+                    </template>
+                    <template v-slot:content>
+                        <div class="col mb-3">
+                            <input-container-component title="Nome" id="updateName" idHelper="updateNameHelper" helper="Informe o nome a ser atualizado">
+                                <input type="text" class="form-control" id="updateName" placeholder="Nome da marca" aria-describedby="updateNameHelper" v-model="$store.state.item.nome">
+                            </input-container-component>
+                            
+                        </div>
+                        <div class="col mb-3">
+                            <input-container-component title="Logo da marca" id="insertFile" idHelper="fileHelper" helper="Selecione uma nova imagem no formato .png">
+                                <input type="file" class="form-control" id="insertFile" aria-describedby="fileHelper" @change="loadFile($event)">
+                            </input-container-component>
+                            
+                        </div>
+                    </template>
+                    <template v-slot:footer>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary btn-sm " @click="update()">Adicionar</button>
+                    </template>
+                </modal-component>
+
+                <modal-component id="modalMarcaDrop" title="Remover marca">
+                    <template v-slot:alert>
+                        <alert-component type="success" title="Ação realizada." :details="$store.state.transation" v-if="$store.state.transation.status == 'success'"></alert-component>
+                        <alert-component type="danger" title="Erro!" :details="$store.state.transation" v-if="$store.state.transation.status == 'error'"></alert-component>
+                    </template>
+                    <template v-slot:content v-if="$store.state.transation.status != 'success'">
+                        <input-container-component title="ID">
+                            <input type="text" class="form-control" :value="$store.state.item.id" disabled>
+                        </input-container-component>
+                        <input-container-component title="Nome da Marca">
+                            <input type="text" class="form-control" :value="$store.state.item.nome" disabled>
+                        </input-container-component>
+                    </template>
+                    <template v-slot:footer>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                        <button v-if="$store.state.transation.status != 'success'" type="button" class="btn btn-danger btn-sm" @click="drop()">Excluir</button>
                     </template>
                 </modal-component>
 
@@ -128,6 +182,67 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                 }
             },
         methods: {
+            update(){
+                let formData = new FormData();
+                formData.append('_method', 'patch')
+                formData.append('nome', this.$store.state.item.nome)
+
+                if(this.imageFile[0]){
+                    formData.append('imagem', this.imageFile[0])
+                }
+
+                let url = this.baseURL + '/' + this.$store.state.item.id
+
+                const config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Accept': 'application/json',
+                        'Authorization': this.token
+                    }
+                }
+
+                axios.post(url, formData, config)
+                    .then(response => {
+                        this.$store.state.transation.status = 'success'
+                        this.$store.state.transation.message = response.data
+                        insertFile.value = ''
+                        this.showList()
+                    })
+                    .catch(errors => {
+                        this.$store.state.transation.status = 'error'
+                        this.$store.state.transation.message = errors.response.data.message
+                        this.$store.state.transation.info = errors.response.data.errors
+                    })
+            },
+            drop(){
+                const confirmation = confirm('Tem certeza que deseja remover esse registro?')
+                if(!confirmation) return false
+
+                let url = this.baseURL + '/' + this.$store.state.item.id
+              
+                
+                const formData = new FormData()
+                formData.append('_method', 'delete')
+                const config = {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': this.token
+                    }
+                }
+                
+                axios.post(url, formData, config)
+                    .then(response => {
+                        
+                        this.$store.state.transation.status = 'success'
+                        this.$store.state.transation.message = response.data
+                        this.showList()
+                    })
+                    .catch(errors => {
+                       
+                        this.$store.state.transation.status = 'error'
+                        this.$store.state.transation.message = errors.response.data
+                    })
+            },
             seeker(){
                 let filter = ''
                 for (let key in this.search){
@@ -194,6 +309,7 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                         this.transactionDetails = {
                             message: "ID do registro: "+response.data.id
                         }
+                        this.showList()
                     })
                     .catch(errors => {
                         this.transactionStts = 'error'
