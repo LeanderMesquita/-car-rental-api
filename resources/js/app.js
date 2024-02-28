@@ -7,6 +7,14 @@
 import './bootstrap';
 import { createApp } from 'vue';
 
+import vuex from 'vuex'
+vue.use(vuex)
+
+const store = new vuex.Store({
+    state: {
+        
+    }
+})
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
  * registering components with the application instance so they are ready
