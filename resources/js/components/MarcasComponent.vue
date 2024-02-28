@@ -7,18 +7,18 @@
                         <div class="row">
                             <div class="col mb-3">
                                 <input-container-component title="Pesquise por ID" id="inputID" idHelper="idHelper" helper="Pesquise utilizando o número de indentificação (ID).">
-                                    <input type="number" class="form-control" id="inputID" placeholder="ID da marca" aria-describedby="IDhelper">
+                                    <input type="number" class="form-control" id="inputID" placeholder="ID da marca" aria-describedby="IDhelper" v-model="search.id">
                                 </input-container-component>
                             </div>
                             <div class="col mb-3">
                                 <input-container-component title="Pesquise pelo nome" id="nameInput" idHelper="nameHelper" helper="Pesquise utilizando o nome da marca.">
-                                    <input type="text" class="form-control" placeholder="Nome da marca" id="nameInput" aria-describedby="nameHelper">
+                                    <input type="text" class="form-control" placeholder="Nome da marca" id="nameInput" aria-describedby="nameHelper" v-model="search.nome">
                                 </input-container-component>
                             </div>
                         </div>
                     </template>
                     <template v-slot:footer>
-                        <button type="submit" class="btn btn-primary btn-sm ">Search</button>
+                        <button type="submit" class="btn btn-primary btn-sm " @click="seeker()">Search</button>
                     </template>
                 </card-component>
 
@@ -26,6 +26,9 @@
                     <template v-slot:content>
                         <table-component 
                         :info="marcas.data" 
+                        :view="{ visible: true, dataToggle: 'modal', dataTarget:'#modalMarcaView'}"
+                        :update="true"
+                        :drop="true"
                         :titles="{
                             id: {title: 'ID', type:'text'},
                             nome: {title: 'Nome', type:'text'},
@@ -74,6 +77,14 @@
                     </template>
                 </modal-component>
 
+                <modal-component id="modalMarcaView" title="Visualizar marca">
+                    <template v-slot:alert></template>
+                    <template v-slot:content></template>
+                    <template v-slot:footer>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                    </template>
+                </modal-component>
+
                 
             </div>
         </div>
@@ -95,11 +106,14 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
      
                 return {
                 baseURL: 'http://127.0.0.1:8000/api/auth/marca',
+                paginateURL: '',
+                URLfilter: '',
                 marcaName: '',
                 imageFile: [],
                 transactionStts: '',
                 transactionDetails: {},
-                marcas: { data: []}
+                marcas: { data: []},
+                search: { id:'', nome:''}
             }
         },
         computed: {
@@ -114,14 +128,33 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                 }
             },
         methods: {
+            seeker(){
+                let filter = ''
+                for (let key in this.search){
+                    if(this.search[key]){
+                        if(filter != ''){
+                            filter += ';'
+                        }
+                        filter += key + ':like:' + this.search[key]
+                    }
+                }
+                if(filter != ''){
+                    this.paginateURL = 'page=1'
+                    this.URLfilter = '&filter='+filter
+                }else{
+                    this.URLfilter = ''   
+                }
+                this.showList()
+            },
             paginate(item){
                 if(item.url){
-                    this.baseURL = item.url;
-                    this.showList();
+                    this.paginateURL = item.url.split('?')[1]
+                    //this.baseURL = item.url;
                 }
+                this.showList();
             },
             showList(){
-
+                
                 const config = {
                     headers: {
                         'Accept': 'application/json',
@@ -129,7 +162,10 @@ import PaginateComponent from './utilities/PaginateComponent.vue'
                     }
                 }
 
-                axios.get(this.baseURL, config)
+                let url = this.baseURL + '?' + this.paginateURL + this.URLfilter
+                
+
+                axios.get(url, config)
                     .then(response => {
                         this.marcas = response.data
                     })
